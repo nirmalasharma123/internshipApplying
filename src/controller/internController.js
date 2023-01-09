@@ -7,7 +7,7 @@ const validMobileNo=/^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/;
 
 const createIntern =async function(req,res) {
     let data=req.body
-    const {name,email,mobile,collageId} =req.body;
+    const {name,email,mobile,collegeId} =req.body;
 
     if(Object.keys(data).length==0) return res.status(404).send({status:false,msg:"please provide details"});
     if(!name)  return res.status(400).send({status:false,msg:"name is mandatory"});
@@ -26,8 +26,8 @@ const createIntern =async function(req,res) {
     if(!validMobileNo)   return res.status(400).send({status:false,msg: " mobile no is incorrect"});
 
 
-    if(!collageId) return res.status(404).send({satus:false,msg:"collageId is mendatory"});
-    let validCollegeId= await collegeModel.find ({_id:collageId});
+    if(!collegeId) return res.status(404).send({satus:false,msg:"collageId is mendatory"});
+    let validCollegeId= await collegeModel.find ({_id:collegeId});
     if(validCollegeId.length==0) return res.status(404).send({satus:false,msg:"user not found"})
     
 
@@ -38,9 +38,31 @@ const createIntern =async function(req,res) {
      res.send(createIntern)
 
 };
+ 
+    
+ const internDetails=async function(req,res){
+    let data =req.query
+    if(Object.keys(req.query).length==0) return res.status(400).send({satus:false,msg:"please provide  peram"});
 
-const 
+    let findCollage=await collegeModel.find({name:data.collegeName,isDeleted:false});
+    if(findCollage.length==0) return res.status(404).send({satus:false,msg:"no collage found"});
+    let logolink=findCollage.logolink;
+    let collageNam=findCollage.name;
+    let fullName=findCollage.fullName;
+    console.log(findCollage)
+   
+
+    let findInterns=await internModel.find({collegeId:findCollage._id}).select({name:1,email:1,mobile:1});
+    console.log(findInterns)
+     let details={collegeName:collageNam,fullName:fullName,logolink:logolink,internDetails:
+        findInterns};
+        
+        return res.status(200).send({satus:true,data:details})
 
 
 
-module.exports={createIntern};
+
+ }
+
+
+module.exports={createIntern,internDetails};

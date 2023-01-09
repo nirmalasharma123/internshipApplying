@@ -1,8 +1,8 @@
 const collageModel=require("../model/college");
 let validateName = /^([a-z  A-Z ]){2,10}$/;
 let validateFullname=  /^([a-z  A-Z ]){2,50}$/;
-const validatorUrl= require("mongoose-type-url")
-    
+
+//onst validatorUrl= require("mongoose-type-url")
 
 
 const creatCollage=async function(req,res){
@@ -18,7 +18,7 @@ const creatCollage=async function(req,res){
         if(!validateFullname.test(fullName)) res.status(400).send({msg:"Enter validf fullname"})
 
         if(!logoLink)  return res.status(400).send({status:false,msg:"logoLink is mandatory"});
-        if(!validatorUrl.isUrl(logoLink)) return res.status(400).send({status:false,msg:"logoLink is invalid"})
+        //if(!validatorUrl.isUrl(logoLink)) return res.status(400).send({status:false,msg:"logoLink is invalid"})
 
 
     

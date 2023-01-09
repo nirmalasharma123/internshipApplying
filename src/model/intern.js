@@ -18,7 +18,7 @@ const internSchema=new mongoose.Schema({
         required:true,
         unique:true
     },
-    collageId:{
+    collegeId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"collage",
         required:true
