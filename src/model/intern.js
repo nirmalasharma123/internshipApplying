@@ -3,10 +3,13 @@ const mongoose= require("mongoose");
 const internSchema=new mongoose.Schema({
     name:{
         type:String,
+        trim:true,
         required:true
     },
     email:{
         type:String,
+        lowercase:true,
+        trim:true,
         required:true,
         unique:true
     },
@@ -17,7 +20,8 @@ const internSchema=new mongoose.Schema({
     },
     collageId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"collage"
+        ref:"collage",
+        required:true
     },
     isDeleted:{
         type:Boolean,
