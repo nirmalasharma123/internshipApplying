@@ -37,7 +37,7 @@ const createIntern =async function(req,res) {
 
     if(!collegeName)  return res.status(400).send({status:false,msg:"name is mandatory"});
 
-    let findCollageId=await collegeModel.findOne({ $or: [{ fullName: collegeName }, { name: collegeName }], isDeleted:false}).select({_id:0});
+    let findCollageId=await collegeModel.findOne({ $or: [{ fullName: collegeName }, { name: collegeName }], isDeleted:false}).select({_id:1});
 
     if(!findCollageId) return req.status(400).send("collage name didn't exsist")
     data.collegeId=findCollageId._id;
