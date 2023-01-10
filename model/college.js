@@ -2,11 +2,15 @@ const mongoose= require("mongoose");
 const collegeSchema=new mongoose.Schema({
     name:{
         type:String,
+        trim:true,
+        lowercase:true,
         required:true,
         unique:true
     },
     fullName:{
         type:String,
+        lowercase:true,
+        trim:true,
         required:true,
     },
     logoLink:{
@@ -19,4 +23,4 @@ const collegeSchema=new mongoose.Schema({
     },
 },{timestamps:true})
 
-module.exports=mongoose.model("collage",collegeSchema)
+module.exports=mongoose.model("college",collegeSchema)

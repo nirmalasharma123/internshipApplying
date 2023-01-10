@@ -1,23 +1,32 @@
 const collageModel=require("../model/college");
-
+const validate = require("../validator/validator")
 
 const creatCollage=async function(req,res){
     try{
         //let data=req.body
-        const {name,fullName,logoLink}=req.body
-        if(!name) res.status(400).send({status:false,msg:"name is mandatory"});
-        if(!fullName) res.status(400).send({status:false,msg:"fullName is mandatory"});
-        if(!logoLink) res.status(400).send({status:false,msg:"logoLink is mandatory"});
-        let newName=name.trim();
-        let fullname=fullName.trim();
-        let logo=logoLink.trime();
-        newName=name;
-        fullname=fullName;
-        logo=logoLink;
+        const {name,fullName,logoLink}=req.body;
+        if(Object.keys(req.body).length==0) return res.status(404).send({status:false,msg:"please provide details"})
 
+        if(!name)  return res.status(400).send({status:false,msg:"name is mandatory"});
+        if(!validate.isvalidName(name))  return res.status(400).send({msg:"Enter valid Name"})
+        
+        if(!fullName)  return res.status(400).send({status:false,msg:"fullName is mandatory"});
+        if(!validate.isValidateFullame(fullName))return  res.status(400).send({msg:"Enter validf fullname"})
+
+        if(!logoLink)  return res.status(400).send({status:false,msg:"logoLink is mandatory"});
+        if(!validate.isvalidLink(logoLink) && !validate.isvalidFormat(logoLink))  return res.status(400).send({msg:"Enter valid url"})
+ 
+
+    
        let collageName= await collageModel.find({name:name});
-       if(collageName)  return res.status(401).send({satus:false,msg:" collage name already exsist"})
+       if(collageName.length!=0)  return res.status(401).send({satus:false,msg:" collage name already exsist"});
+
+       let duplicatedFullname=await collageModel.find({fullName:fullName});
+       if(duplicatedFullname.length!=0)  return res.status(401).send({satus:false,msg:" collage  full name already exsist"});
+
+
        let newCollage=await collageModel.create(req.body);
+       
        return res.status(201).send({satus:true,data:newCollage});
 
     }catch(error){

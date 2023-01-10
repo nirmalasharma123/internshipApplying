@@ -1,7 +1,11 @@
 const express=require("express");
 const router=express.Router();
-const controller=require("../controller/collageController");
+const collegeController=require("../controller/collageController");
+const interController=require("../controller/internController")
 
-router.post(" /functionup/colleges", controller.creatCollage);
 
-module.exports=router;
+router.post("/functionup/colleges", collegeController.creatCollage);
+router.post("/functionup/interns",interController.createIntern);
+router.get("/functionup/collegeDetails",interController.collegeDetails);
+
+module.exports=router
