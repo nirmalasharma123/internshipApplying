@@ -5,20 +5,20 @@ const isValidateEmail = function(email) {
 };
 
 const isValidateFullame = function(fullName){
-    const regex = /^([a-z  A-Z ]){2,30}$/
+    const regex = /^([a-z  A-Z ]){2,50}$/
     return regex.test(fullName)
 } ;
 const isvalidName=function(name){
     const regex=/^([a-z  A-Z ]){2,10}$/
     return regex.test(name)
 };
-const isvalidLink=function(logoLink){
-    const regex=/(.png|.jpg|.jpeg)$/i
-        return regex.test(logoLink)
-};
-const  isvalidFormat=function(logoLink){
-    const regex=/^http/i;
-    return regex.test(logoLink)
+ const isvalidLink=function(logoLink){
+     const regex= /^https?:\/\/.*\.[s3].*\.(png|gif|webp|jpeg|jpg)\??.*$/
+         return regex.test(logoLink)
+ };
+const isValidPhone = function(mobile){
+    const regex = /^[1-9]\d*$/
+    return regex.test(mobile)
 };
 
 
@@ -28,4 +28,4 @@ module.exports.isValidateEmail = isValidateEmail;
 module.exports.isValidateFullame =isValidateFullame;
 module.exports.isvalidName=isvalidName;
 module.exports.isvalidLink=isvalidLink;
-module.exports.isvalidFormat=isvalidFormat
+module.exports.isValidPhone=isValidPhone;
