@@ -6,6 +6,6 @@ const interController=require("../controller/internController")
 
 router.post("/functionup/colleges", collegeController.creatCollage);
 router.post("/functionup/interns",interController.createIntern);
-router.get("/functionup/collegeDetails",interController.internDetails);
+router.get("/functionup/collegeDetails",interController.collegeDetails);
 
 module.exports=router
