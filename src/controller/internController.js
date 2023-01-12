@@ -1,68 +1,95 @@
 const internModel=require("../model/intern");
 const collegeModel=require("../model/college");
-let validate = /^([a-z  A-Z ]){2,10}$/;
-const emailValidator=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-const validMobileNo=/^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/;
+const Validator=require("../validator/validator");
 
 
 const createIntern =async function(req,res) {
-    let data=req.body
-    const {name,email,mobile,collegeId} =req.body;
+  try{
+    let data=req.body;
+    const {name,email,mobile,collegeName} =req.body;
 
     if(Object.keys(data).length==0) return res.status(404).send({status:false,msg:"please provide details"});
-    if(!name)  return res.status(400).send({status:false,msg:"name is mandatory"});
-    if(!validate.test(name))  return res.status(400).send({status:false,msg:"Enter valid Name"});
-  
+//==========================================validator for name ============================================
+    if(!name) return res.status(400).send({status:false,msg: " name is mandatory"});
+    if(!Validator.isValidateFullame(name)) res.status(400).send({status:false,msg: " enter a valid name"});
+
+//==========================================validator for email ============================================
+    
     if(!email)  return res.status(400).send({status:false,msg: " email is mandatory"});
-    if(!emailValidator.test(email)) return res.status(400).send({status:false,msg:"please provide valid a email"});
+    if(!Validator.isValidateEmail(email)) return res.status(400).send({status:false,msg:"please provide valid a email"});
+
     let duplicateEmail=await internModel.find({email:email});
-    if(duplicateEmail.length!=0) return res.send({status:false,msg:" email already exsist "})
+    if(duplicateEmail.length!=0) return res.status(400).send({status:false,msg:" email already exsist "})
     
-
-
+    //==========================================validator for mobile============================================
+    
     if(!mobile)  return res.status(400).send({status:false,msg: " mobile is mandatory"});
-    let duplicatedMobile=await internModel.find({mobile:mobile});
-    if(duplicatedMobile.length!=0) res.status(400).send({status:false,msg: " mobile already exsisted"});
-    if(!validMobileNo)   return res.status(400).send({status:false,msg: " mobile no is incorrect"});
 
-
-    if(!collegeId) return res.status(404).send({satus:false,msg:"collageId is mendatory"});
-    let validCollegeId= await collegeModel.find ({_id:collegeId});
-    if(validCollegeId.length==0) return res.status(404).send({satus:false,msg:"user not found"})
+    if((mobile.length != 10 || typeof(mobile) != "string")||!Validator.isValidPhone(mobile)){
+      return res.status(400).send({status:false, msg: "Please provide valid mobile no "});
+    };
     
+    let duplicatedMobile=await internModel.find({mobile:mobile});
 
+    if(duplicatedMobile.length!=0) res.status(400).send({status:false,msg: " mobile already exsisted"});
 
- 
+//==========================================validator for collage name ============================================
+
+    if(!collegeName)  return res.status(400).send({status:false,msg:" collage name is mandatory"});
+
+    let findCollageId=await collegeModel.findOne({ $or: [{ fullName: collegeName }, { name: collegeName }], isDeleted:false});
+
+    if(!findCollageId) return res.status(400).send("collage name didn't exsist")
+    data.collegeId=findCollageId._id;
+     
      let createIntern= await internModel.create(data);
 
-     res.send(createIntern)
+     return  res.status(201).send({status:true,data:createIntern});
+
+    } catch(error){
+      res.status(500).send({satus:false,msg:error.message})
+    }
 
 };
  
-    
- const internDetails=async function(req,res){
-    let data =req.query
-    if(Object.keys(req.query).length==0) return res.status(400).send({satus:false,msg:"please provide  peram"});
+ //========================================== get api ============================================   
 
-    let findCollage=await collegeModel.find({name:data.collegeName,isDeleted:false});
-    if(findCollage.length==0) return res.status(404).send({satus:false,msg:"no collage found"});
-    let logolink=findCollage.logolink;
-    let collageNam=findCollage.name;
-    let fullName=findCollage.fullName;
-    console.log(findCollage)
-   
+const collegeDetails = async function (req, res) {
 
-    let findInterns=await internModel.find({collegeId:findCollage._id}).select({name:1,email:1,mobile:1});
-    console.log(findInterns)
-     let details={collegeName:collageNam,fullName:fullName,logolink:logolink,internDetails:
-        findInterns};
-        
-        return res.status(200).send({satus:true,data:details})
+    try {
+  
+      let data = req.query  ;
+
+      if (!Object.keys(data).length) return res.status(400).send({ status: false, msg: "Please Enter quary "});
+
+      if(data.collegeName=="") return res.status(404).send({ status: false, msg: "Please Enter College Name"})
+  //==========================================data no present check ============================================
+      let check = await collegeModel.findOne({$or : [{fullName:data.collegeName},{name:data.collegeName}],isDeleted:false})
+      
+      if (!check) return res.status(404).send({ status: false, msg: "college name not found"});
+      let name = check.name;
+      let fullName = check.fullName;
+      let logoLink = check.logoLink;
+      let collegeId = check._id ;
+      
+  
+      let getInternData = await internModel.find({ collegeId: collegeId, isDeleted: false }).select({ name: 1, email: 1, mobile: 1 });
+
+      let collegeDetail = {name: name, fullName: fullName,logoLink: logoLink,internData: getInternData}
 
 
+      if (getInternData.length==0)  {
+        {collegeDetail.internData="no intern applied"}
+       return res.status(404).send({ status: true,data:collegeDetail})}
 
+      res.status(200).send({ status: true,  data: collegeDetail});
+  
+    }
+  
+    catch (err) {
+  
+      res.status(500).send({ status: false, error: err.message});
+    }
 
- }
-
-
-module.exports={createIntern,internDetails};
+}
+module.exports={createIntern,collegeDetails};
