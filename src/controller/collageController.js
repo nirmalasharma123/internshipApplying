@@ -14,16 +14,17 @@ const creatCollage=async function(req,res){
         if(!name)  return res.status(400).send({status:false,msg:"name is mandatory"});
         if(!validate.isvalidName(name))  return res.status(400).send({msg:"Enter valid Name"})
     
-        //==========================================validator for full name ============================================
+
+ //==========================================validator for full name ============================================
     
         if(!fullName)  return res.status(400).send({status:false,msg:"fullName is mandatory"});
-        if(!validate.isValidateFullame(fullName))return  res.status(400).send({msg:"Enter validf fullname"})
 
-        //==========================================validator for logo ============================================
+ //==========================================validator for logo ============================================
 
         if(!logoLink)  return res.status(400).send({status:false,msg:"logoLink is mandatory"});
         if(!validate.isvalidLink(logoLink) || !validator.isURL(logoLink))  return res.status(400).send({msg:"Enter valid url"})
-     //==========================================validator for finding name  ============================================
+     
+//==========================================validator for finding name  ============================================
 
        let collageName= await collageModel.find({name:name});
        if(collageName.length!=0)  return res.status(401).send({satus:false,msg:" collage name already exsist"});
@@ -32,7 +33,7 @@ const creatCollage=async function(req,res){
        if(duplicatedFullname.length!=0)  return res.status(401).send({satus:false,msg:" collage  full name already exsist"});
 
 
-       let newCollage=await collageModel.create(req.body);
+       let newCollage=await collageModel.create(req.body); 
        
        return res.status(201).send({satus:true,data:newCollage});
 
@@ -42,3 +43,4 @@ const creatCollage=async function(req,res){
 }
 
 module.exports={creatCollage}
+
