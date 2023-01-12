@@ -35,11 +35,11 @@ const createIntern =async function(req,res) {
 
 //==========================================validator for collage name ============================================
 
-    if(!collegeName)  return res.status(400).send({status:false,msg:"name is mandatory"});
+    if(!collegeName)  return res.status(400).send({status:false,msg:" collage name is mandatory"});
 
-    let findCollageId=await collegeModel.findOne({ $or: [{ fullName: collegeName }, { name: collegeName }], isDeleted:false}).select({_id:1});
+    let findCollageId=await collegeModel.findOne({ $or: [{ fullName: collegeName }, { name: collegeName }], isDeleted:false});
 
-    if(!findCollageId) return req.status(400).send("collage name didn't exsist")
+    if(!findCollageId) return res.status(400).send("collage name didn't exsist")
     data.collegeId=findCollageId._id;
      
      let createIntern= await internModel.create(data);
@@ -60,8 +60,6 @@ const collegeDetails = async function (req, res) {
   
       let data = req.query  ;
 
-      data.collegeName=data.collegeName.trim();
-
       if (!Object.keys(data).length) return res.status(400).send({ status: false, msg: "Please Enter quary "});
 
       if(data.collegeName=="") return res.status(404).send({ status: false, msg: "Please Enter College Name"})
@@ -81,8 +79,8 @@ const collegeDetails = async function (req, res) {
 
 
       if (getInternData.length==0)  {
-        {collegeDetail.internData="no intern aplied"}
-       return res.status(404).send({ status: false,data:collegeDetail})}
+        {collegeDetail.internData="no intern applied"}
+       return res.status(404).send({ status: true,data:collegeDetail})}
 
       res.status(200).send({ status: true,  data: collegeDetail});
   
